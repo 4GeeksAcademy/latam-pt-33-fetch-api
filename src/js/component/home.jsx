@@ -7,6 +7,8 @@ const Home = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [ page, setPage ] = useState(1);
 	
+	const [charactersData, setCharactersData] = useState({});
+
 	async function loadCharacters() {
 		const urlApi = `https://dragonball-api.com/api/characters?page=${page}`;
 		setIsLoading(true);
@@ -14,7 +16,8 @@ const Home = () => {
 			const response = await fetch(urlApi);
 			const data = await response.json();
 			setCharacters([ ...characters, ...data.items ]);
-		}catch( error ) {
+			setCharactersData(data.meta);
+		}catch( error ) { // exeptions
 			alert(error);
 		}
 		setIsLoading(false);
@@ -25,12 +28,14 @@ const Home = () => {
 		loadCharacters();
 	}, [])
 
-	// se ejectua cuando cambia page
+	// se ejectua cuando cambia el state page 1 -> 2
 	useEffect(()=>{
 		loadCharacters();
 	},[page])
 
 	return (
+		<>
+		<h1>Hola Gustavo</h1>
 		<div className="text-center">
 			<h1 className="text-center mt-5">Dragon Ball Characters 🐉!</h1>
 
@@ -66,16 +71,19 @@ const Home = () => {
 						</div>
 					</div>)
 				}
-				<button className="btn btn-warning m-5 p-2"
-					onClick={()=>{
-						setPage(page + 1);
-					}}
-				>
-					Load More
-				</button>
+				{page <= charactersData.totalPages && 
+					<button className="btn btn-warning m-5 p-2"
+						onClick={()=>{
+							setPage(page + 1);
+						}}
+					>
+						Load More
+					</button>
+				}
 			</div>
 
 		</div>
+		</>
 	);
 };
 
